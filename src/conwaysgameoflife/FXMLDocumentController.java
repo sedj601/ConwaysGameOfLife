@@ -33,22 +33,19 @@ public class FXMLDocumentController implements Initializable
 
     Timeline timeline;
     List<List<Rectangle>> rectangles = new ArrayList();
+    int size = 10;
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        tilePane.setHgap(1);
-        tilePane.setVgap(1);
-
-        for (int row = 0; row < 100; row++) {
+        for (int row = 0; row < size; row++) {
             List<Rectangle> rectanglesRow = new ArrayList();
 
-            for (int column = 0; column < 100; column++) {
+            for (int column = 0; column < size; column++) {
 
-                Rectangle rectangle = new Rectangle(5, 5, Color.TRANSPARENT);
+                Rectangle rectangle = new Rectangle(60, 60, Color.TRANSPARENT);
                 rectangle.setOnMouseClicked(rectangleActionEvent);
-
-                if (row > 95 && row < 100 && column > 0) {
+                if ((row == 4) && (column == 3 || column == 4 || column == 5)) {
                     rectangle.setFill(Color.BLUE);
                 }
                 rectanglesRow.add(rectangle);
@@ -92,7 +89,75 @@ public class FXMLDocumentController implements Initializable
 
     private final EventHandler<MouseEvent> rectangleActionEvent = (event) -> {
         Rectangle rectangle = (Rectangle) event.getSource();
+        switchColors(rectangle);
+    };
 
+    public void checkLiveNeighborCount()
+    {
+        for (int row = 0; row < size; row++) {
+            for (int column = 0; column < size; column++) {
+                int counter = 0;
+
+                if ((row - 1) > -1 && (column - 1) > -1 && (row + 1) < size && (column + 1) < size) {
+
+                    if (rectangles.get(row - 1).get(column - 1).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+
+                    if (rectangles.get(row - 1).get(column).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+
+                    if (rectangles.get(row - 1).get(column + 1).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+
+                    if (rectangles.get(row + 1).get(column - 1).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+
+                    if (rectangles.get(row + 1).get(column).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+                    if (rectangles.get(row + 1).get(column + 1).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+
+                    if (rectangles.get(row).get(column - 1).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+
+                    if (rectangles.get(row).get(column + 1).getFill().toString().equals("0x0000ffff")) {
+                        counter++;
+                    }
+                }
+
+                rectangles.get(row).get(column + 1).setUserData(counter);
+                // System.out.println("row: " + row + "  column: " + column + "  counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
+                if (counter < 2 && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
+                    System.out.println("Found 1!");
+                    rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
+                }
+                else if ((counter == 2 || counter == 3) && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
+                    System.out.println("Found 2!");
+                    rectangles.get(row).get(column).setFill(Color.BLUE);
+                }
+                else if (counter > 3 && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
+                    System.out.println("Found 3!");
+                    rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
+                }
+                else if (counter == 3 && rectangles.get(row).get(column).getFill().toString().equals("0x00000000")) {
+                    System.out.println("Found 4!");
+                    rectangles.get(row).get(column).setFill(Color.BLUE);
+                }
+
+            }
+
+        }
+    }
+
+    private void switchColors(Rectangle rectangle)
+    {
         switch (rectangle.getFill().toString()) {
             case "0x0000ffff":
                 rectangle.setFill(Color.TRANSPARENT);
@@ -100,58 +165,6 @@ public class FXMLDocumentController implements Initializable
             case "0x00000000":
                 rectangle.setFill(Color.BLUE);
                 break;
-        }
-    };
-
-    public void checkLiveNeighborCount()
-    {
-        for (int row = 0; row < 100; row++) {
-            for (int column = 0; column < 100; column++) {
-                int counter = 0;
-
-                if ((row - 1) > -1 && (column - 1) > -1 && (row + 1) < 100 && (column + 1) < 100) {
-
-                    if (rectangles.get(row - 1).get(column - 1).getFill().toString().equals("0x0000ffff")) {
-                        System.out.println("counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
-                        counter++;
-                    }
-
-                    if (rectangles.get(row - 1).get(column).getFill().toString().equals("0x0000ffff")) {
-                        System.out.println("counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
-                        counter++;
-                    }
-
-                    if (rectangles.get(row).get(column - 1) != null && rectangles.get(row).get(column - 1).getFill().toString().equals("0x0000ffff")) {
-                        System.out.println("counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
-                        counter++;
-                    }
-
-                    if (rectangles.get(row + 1).get(column + 1) != null && rectangles.get(row + 1).get(column + 1).getFill().toString().equals("0x0000ffff")) {
-                        System.out.println("counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
-                        counter++;
-                    }
-
-                    if (rectangles.get(row).get(column + 1) != null && rectangles.get(row + 1).get(column + 1).getFill().toString().equals("0x0000ffff")) {
-                        System.out.println("counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
-                        counter++;
-                    }
-                }
-
-                if (counter < 2 && rectangles.get(row).get(column).toString().equals("0x0000ffff")) {
-                    rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
-                }
-                else if ((counter == 2 || counter == 3) && rectangles.get(row).get(column).toString().equals("0x0000ffff")) {
-                    //do nothing but stay alive
-                }
-                else if (counter > 3 && rectangles.get(row).get(column).toString().equals("0x0000ffff")) {
-                    rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
-                }
-                else if (counter == 3 && rectangles.get(row).get(column).toString().equals("0x00000000")) {
-                    rectangles.get(row).get(column).setFill(Color.BLUE);
-                }
-
-            }
-
         }
     }
 

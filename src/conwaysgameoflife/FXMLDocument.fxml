@@ -32,7 +32,7 @@
       </MenuBar>
       <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
          <children>
-            <TilePane fx:id="tilePane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: black;" />
+            <TilePane fx:id="tilePane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="602.0" prefWidth="602.0" style="-fx-border-color: black;" />
          </children>
       </StackPane>
       <StackPane prefHeight="150.0" prefWidth="200.0">
