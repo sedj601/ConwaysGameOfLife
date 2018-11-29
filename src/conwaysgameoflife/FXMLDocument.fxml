@@ -40,7 +40,6 @@
             <HBox maxHeight="-Infinity" maxWidth="-Infinity" spacing="10.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#handleBtnOnactionStart" prefHeight="25.0" prefWidth="47.0" text="Start" />
-                  <Button mnemonicParsing="false" onAction="#handleBtnOnactionPause" prefHeight="25.0" prefWidth="47.0" text="Pause" />
                   <Button mnemonicParsing="false" onAction="#handleBtnOnactionStop" prefHeight="25.0" prefWidth="47.0" text="Stop" />
                </children>
             </HBox>

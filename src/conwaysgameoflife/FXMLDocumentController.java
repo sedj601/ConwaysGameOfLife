@@ -33,6 +33,7 @@ public class FXMLDocumentController implements Initializable
 
     Timeline timeline;
     List<List<Rectangle>> rectangles = new ArrayList();
+    List<Rectangle> rectanglesNeedColorSwap = new ArrayList();
     int size = 10;
 
     @Override
@@ -42,12 +43,8 @@ public class FXMLDocumentController implements Initializable
             List<Rectangle> rectanglesRow = new ArrayList();
 
             for (int column = 0; column < size; column++) {
-
                 Rectangle rectangle = new Rectangle(60, 60, Color.TRANSPARENT);
                 rectangle.setOnMouseClicked(rectangleActionEvent);
-                if ((row == 4) && (column == 3 || column == 4 || column == 5)) {
-                    rectangle.setFill(Color.BLUE);
-                }
                 rectanglesRow.add(rectangle);
             }
             rectangles.add(rectanglesRow);
@@ -55,11 +52,12 @@ public class FXMLDocumentController implements Initializable
 
         }
 
-        checkLiveNeighborCount();
+        //checkLiveNeighborCount();
         // TODO
-        timeline = new Timeline(new KeyFrame(Duration.seconds(2), (event) -> {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(.5), (event) -> {
             System.out.println("Timeline running!");
             checkLiveNeighborCount();
+            rectanglesNeedColorSwap.forEach(rectangle -> switchColors(rectangle));
         }));
 
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -73,13 +71,12 @@ public class FXMLDocumentController implements Initializable
         timeline.play();
     }
 
-    @FXML
-    void handleBtnOnactionPause(ActionEvent actionEvent)
-    {
-        System.out.println("Pausing timeline");
-        timeline.pause();
-    }
-
+//    @FXML
+//    void handleBtnOnactionPause(ActionEvent actionEvent)
+//    {
+//        System.out.println("Pausing timeline");
+//        timeline.pause();
+//    }
     @FXML
     void handleBtnOnactionStop(ActionEvent actionEvent)
     {
@@ -94,61 +91,107 @@ public class FXMLDocumentController implements Initializable
 
     public void checkLiveNeighborCount()
     {
+        rectanglesNeedColorSwap.clear();
+
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
                 int counter = 0;
 
-                if ((row - 1) > -1 && (column - 1) > -1 && (row + 1) < size && (column + 1) < size) {
-
+                try {
                     if (rectangles.get(row - 1).get(column - 1).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
 
+                try {
                     if (rectangles.get(row - 1).get(column).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
 
+                try {
                     if (rectangles.get(row - 1).get(column + 1).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
-
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
+                try {
                     if (rectangles.get(row + 1).get(column - 1).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
-
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
+                try {
                     if (rectangles.get(row + 1).get(column).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
+
+                try {
                     if (rectangles.get(row + 1).get(column + 1).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
 
+                try {
                     if (rectangles.get(row).get(column - 1).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
 
+                try {
                     if (rectangles.get(row).get(column + 1).getFill().toString().equals("0x0000ffff")) {
                         counter++;
                     }
                 }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
 
-                rectangles.get(row).get(column + 1).setUserData(counter);
+                try {
+                    rectangles.get(row).get(column + 1).setUserData(counter);
+                }
+                catch (IndexOutOfBoundsException ex) {
+                    System.out.println("do nothing!");
+                }
                 // System.out.println("row: " + row + "  column: " + column + "  counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
                 if (counter < 2 && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
                     System.out.println("Found 1!");
-                    rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
+                    //rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
+                    rectanglesNeedColorSwap.add(rectangles.get(row).get(column));
                 }
                 else if ((counter == 2 || counter == 3) && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
                     System.out.println("Found 2!");
-                    rectangles.get(row).get(column).setFill(Color.BLUE);
+                    //rectangles.get(row).get(column).setFill(Color.BLUE);
                 }
                 else if (counter > 3 && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
                     System.out.println("Found 3!");
-                    rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
+                    rectanglesNeedColorSwap.add(rectangles.get(row).get(column));
+                    //rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
                 }
                 else if (counter == 3 && rectangles.get(row).get(column).getFill().toString().equals("0x00000000")) {
                     System.out.println("Found 4!");
-                    rectangles.get(row).get(column).setFill(Color.BLUE);
+                    //rectangles.get(row).get(column).setFill(Color.BLUE);
+                    rectanglesNeedColorSwap.add(rectangles.get(row).get(column));
                 }
 
             }
