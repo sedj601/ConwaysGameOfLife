@@ -34,26 +34,29 @@ public class FXMLDocumentController implements Initializable
     Timeline timeline;
     List<List<Rectangle>> rectangles = new ArrayList();
     List<Rectangle> rectanglesNeedColorSwap = new ArrayList();
-    int size = 10;
+    int columnRows = 150;
+    int heightWidth = 4;
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        for (int row = 0; row < size; row++) {
+        tilePane.setPrefTileHeight(heightWidth);
+        tilePane.setPrefTileWidth(heightWidth);
+        tilePane.setPrefColumns(columnRows);
+        tilePane.setPrefRows(columnRows);
+
+        for (int row = 0; row < columnRows; row++) {
             List<Rectangle> rectanglesRow = new ArrayList();
 
-            for (int column = 0; column < size; column++) {
-                Rectangle rectangle = new Rectangle(60, 60, Color.TRANSPARENT);
+            for (int column = 0; column < columnRows; column++) {
+                Rectangle rectangle = new Rectangle(heightWidth, heightWidth, Color.WHITE);
                 rectangle.setOnMouseClicked(rectangleActionEvent);
                 rectanglesRow.add(rectangle);
             }
             rectangles.add(rectanglesRow);
             tilePane.getChildren().addAll(rectanglesRow);
-
         }
 
-        //checkLiveNeighborCount();
-        // TODO
         timeline = new Timeline(new KeyFrame(Duration.seconds(.5), (event) -> {
             System.out.println("Timeline running!");
             checkLiveNeighborCount();
@@ -61,7 +64,6 @@ public class FXMLDocumentController implements Initializable
         }));
 
         timeline.setCycleCount(Timeline.INDEFINITE);
-
     }
 
     @FXML
@@ -71,12 +73,6 @@ public class FXMLDocumentController implements Initializable
         timeline.play();
     }
 
-//    @FXML
-//    void handleBtnOnactionPause(ActionEvent actionEvent)
-//    {
-//        System.out.println("Pausing timeline");
-//        timeline.pause();
-//    }
     @FXML
     void handleBtnOnactionStop(ActionEvent actionEvent)
     {
@@ -93,8 +89,8 @@ public class FXMLDocumentController implements Initializable
     {
         rectanglesNeedColorSwap.clear();
 
-        for (int row = 0; row < size; row++) {
-            for (int column = 0; column < size; column++) {
+        for (int row = 0; row < columnRows; row++) {
+            for (int column = 0; column < columnRows; column++) {
                 int counter = 0;
 
                 try {
@@ -103,7 +99,7 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
 
                 try {
@@ -112,7 +108,7 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
 
                 try {
@@ -121,7 +117,7 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
                 try {
                     if (rectangles.get(row + 1).get(column - 1).getFill().toString().equals("0x0000ffff")) {
@@ -129,7 +125,7 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
                 try {
                     if (rectangles.get(row + 1).get(column).getFill().toString().equals("0x0000ffff")) {
@@ -137,7 +133,7 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
 
                 try {
@@ -146,7 +142,7 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
 
                 try {
@@ -155,7 +151,7 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
 
                 try {
@@ -164,38 +160,29 @@ public class FXMLDocumentController implements Initializable
                     }
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
 
                 try {
                     rectangles.get(row).get(column + 1).setUserData(counter);
                 }
                 catch (IndexOutOfBoundsException ex) {
-                    System.out.println("do nothing!");
+                    //do nothing!
                 }
-                // System.out.println("row: " + row + "  column: " + column + "  counter: " + counter + "  state: " + rectangles.get(row).get(column).getFill());
+
                 if (counter < 2 && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
-                    System.out.println("Found 1!");
-                    //rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
                     rectanglesNeedColorSwap.add(rectangles.get(row).get(column));
                 }
                 else if ((counter == 2 || counter == 3) && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
-                    System.out.println("Found 2!");
-                    //rectangles.get(row).get(column).setFill(Color.BLUE);
+                    //do nothing
                 }
                 else if (counter > 3 && rectangles.get(row).get(column).getFill().toString().equals("0x0000ffff")) {
-                    System.out.println("Found 3!");
-                    rectanglesNeedColorSwap.add(rectangles.get(row).get(column));
-                    //rectangles.get(row).get(column).setFill(Color.TRANSPARENT);
-                }
-                else if (counter == 3 && rectangles.get(row).get(column).getFill().toString().equals("0x00000000")) {
-                    System.out.println("Found 4!");
-                    //rectangles.get(row).get(column).setFill(Color.BLUE);
                     rectanglesNeedColorSwap.add(rectangles.get(row).get(column));
                 }
-
+                else if (counter == 3 && rectangles.get(row).get(column).getFill().toString().equals("0xffffffff")) {
+                    rectanglesNeedColorSwap.add(rectangles.get(row).get(column));
+                }
             }
-
         }
     }
 
@@ -203,12 +190,11 @@ public class FXMLDocumentController implements Initializable
     {
         switch (rectangle.getFill().toString()) {
             case "0x0000ffff":
-                rectangle.setFill(Color.TRANSPARENT);
+                rectangle.setFill(Color.WHITE);
                 break;
-            case "0x00000000":
+            case "0xffffffff":
                 rectangle.setFill(Color.BLUE);
                 break;
         }
     }
-
 }
